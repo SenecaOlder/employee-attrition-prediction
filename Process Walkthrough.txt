@@ -1,0 +1,83 @@
+<> Employee Attrition Model Walkthrough <>
+**For this project, I used the "Attrition Rate of a Company" data set by ANUJ BISWAS on Kaggle. Public domain license.**
+
+This project aims to build a predictive model adaptable to various purposes, such as analyzing retention rates, 
+identifying key retention variables, predicting customer purchase rates, and understanding the factors influencing these behaviors.
+
+For this project, I chose to develop a logistic regression model to predict whether employees are likely to leave a company. 
+While exploring other algorithms, such as Support Vector Machines (SVMs), I decided on logistic regression for the following reasons:
+
+1.) Scalability with Large Datasets: Logistic regression handles large datasets efficiently. In contrast, SVMs, while powerful and 
+mathematically sophisticated, can become computationally expensive with larger data sizes.
+
+2.) Interpretability: Logistic regression offers the advantage of interpretability. Its coefficients directly represent the impact 
+of individual variables on the outcome, allowing for actionable insights. This is more challenging with SVMs, as their kernel-based 
+approach often obscures variable-level interpretability. This approach ensures that the model is not only predictive but also provides 
+valuable insights into the dynamics of employee attrition, enabling stakeholders to make data-driven decisions.
+
+
+--Implementation--
+To implement the employee attrition model, I followed a structured approach using Python and the scikit-learn library. Below is a 
+  summary of the main steps I used:
+
+Data Loading:
+  The dataset was loaded using the pandas library, which allows for efficient manipulation and analysis of tabular data.
+
+Data Cleaning:
+  Missing values were removed using the dropna() function to ensure the dataset was clean and free of incomplete entries.
+  This simplifies preprocessing and ensures the model is trained on reliable data.
+
+Encoding the Target Variable:
+  The target variable, Attrition, was converted from categorical values (Yes, No) to numerical values (1, 0) to make it compatible 
+  with the logistic regression model.
+
+Feature Selection:
+  I selected the most relevant features based on domain knowledge and theoretical importance. These include factors such as age, job 
+  satisfaction, and monthly income, as detailed in the Philosophy section below.
+
+Data Splitting:
+  The dataset was split into training and test sets (70% training, 30% testing) to evaluate model performance on unseen data. 
+  This ensures that the model generalizes well to new data.
+
+Model Training and Prediction:
+  A logistic regression model was trained using the LogisticRegression class from scikit-learn. The liblinear solver was chosen 
+  for its efficiency with smaller datasets. Predictions were made on the test set to assess model performance.
+
+Performance Evaluation:
+  Model accuracy was calculated using scikit-learn’s accuracy_score function to measure how well the predictions matched the actual outcomes.
+
+
+-Philosophy-
+
+To simplify the model and focus on the most actionable insights, I selected key variables with the highest theoretical relevance to employee 
+attrition. These included age, tenure, satisfaction scores, work-life balance, income, and salary hikes. This selection ensured that 
+the model remained interpretable and practical, while still achieving strong predictive accuracy for attrition. Furthermore, 
+the simplified model allows non-technical users to focus on addressing the most impactful factors contributing to attrition, such as improving 
+work-life balance and satisfaction levels. A breakdown of the variables are below.
+
+  1.) Age: Represents the employee's age, which may correlate with career progression stages and attrition likelihood.
+  2.) DistanceFromHome: The distance (in kilometers) between the employee’s residence and workplace. Greater distances
+  might negatively impact work-life balance and increase attrition risk.
+  3.) EnvironmentSatisfaction: Employee’s satisfaction with the overall work environment, measured on a scale of 1 (Low) to 4 (Very High). 
+  Dissatisfaction may drive attrition.
+  4.) JobSatisfaction: Employee’s satisfaction with their job role, measured on a scale of 1 (Low) to 4 (Very High). Higher satisfaction 
+  typically reduces attrition risk.
+  5.) WorkLifeBalance: Employee’s perceived balance between work and personal life, measured on a scale of 1 (Bad) to 4 (Best). 
+  Poor work-life balance is a common driver of attrition.
+  6.) MonthlyIncome: The employee’s monthly income, reflecting financial motivation. Lower incomes might increase attrition risk,
+  particularly for employees dissatisfied with other factors.
+  7.) YearsAtCompany: Total number of years the employee has spent with the company. Employees with shorter tenures may be more likely to leave.
+  8.) YearsSinceLastPromotion: Number of years since the employee’s last promotion. Longer gaps may indicate stagnation and increase the likelihood 
+  of attrition
+  9.) YearsWithCurrManager: Number of years the employee has worked under their current manager. Strong manager-employee relationships often reduce 
+  attrition risk.
+  10.) PercentSalaryHike: Percentage increase in the employee’s salary over the last year. Higher salary hikes can enhance employee satisfaction 
+  and reduce attrition.
+
+
+-Conclusion-
+This project demonstrates the use of a logistic regression model to predict employee attrition, balancing interpretability with performance. 
+The approach of focusing on key variables, cleaning the data, and evaluating model accuracy ensures the insights generated are both actionable,
+meaningful, easily interpretable and simple. I believe this model is also still very flexible in that it can be adapted to many different situations as
+as stated earlier.
+
