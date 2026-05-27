@@ -30,17 +30,12 @@ Can we predict whether an employee is likely to leave a company using a small se
 ### 2. Handling Class Imbalance
 The raw dataset had an 84:16 class imbalance — a naive model could achieve 84% accuracy by simply predicting "stay" every time, which is useless in practice.
 
-To address this, the majority class was undersampled to create a **balanced 1:1 dataset (695:695)** without modifying the original data:
+![Class Distribution Before and After Balancing](images/class_balance.png)
 
-```python
-attrition_yes_sampled = attrition_yes.sample(n=695, random_state=42)
-attrition_no_sampled = attrition_no.sample(n=695, random_state=42)
-balanced_text = pd.concat([attrition_yes_sampled, attrition_no_sampled])
-balanced_text = balanced_text.sample(frac=1, random_state=42).reset_index(drop=True)
-```
+To address this, the majority class was undersampled to create a **balanced 1:1 dataset (695:695)** without modifying the original data.
 
 ### 3. Feature Selection
-Started with 10 theoretically motivated features, then iteratively refined:
+Started with 10 theoretically motivated features, then iteratively refined to the 4 highest-signal variables:
 
 | Initial 10 Features | Final 4 Features |
 |---------------------|-----------------|
@@ -55,14 +50,14 @@ Started with 10 theoretically motivated features, then iteratively refined:
 | YearsWithCurrManager | ❌ Removed |
 | PercentSalaryHike | ❌ Removed |
 
-Removing `MonthlyIncome` — counterintuitively — improved balanced accuracy, suggesting it added noise rather than signal in this simplified model.
-
 ### 4. Model Training
 - **Algorithm:** Logistic Regression (`liblinear` solver)
 - **Split:** 70% training / 30% testing
 - **Why logistic regression over SVM?** Interpretability — coefficients directly quantify each variable's influence on attrition, making insights actionable for non-technical stakeholders
 
-### 5. Results
+---
+
+## Results
 
 | Dataset | Accuracy |
 |---------|----------|
@@ -70,24 +65,37 @@ Removing `MonthlyIncome` — counterintuitively — improved balanced accuracy, 
 | Balanced (695:695, 10 features) | ~62% |
 | Balanced (695:695, 4 features) | **~67%** ✅ |
 
-The 67% accuracy on balanced data is the most meaningful metric — the model is genuinely learning attrition patterns, not just predicting the majority class.
+### Confusion Matrix
+
+![Confusion Matrix](images/confusion_matrix.png)
+
+- **132** employees correctly predicted to stay
+- **146** employees correctly predicted to leave
+- Balanced precision and recall across both classes confirms the model is genuinely learning patterns, not defaulting to the majority class
+
+### Feature Coefficients
+
+![Feature Coefficients](images/feature_coefficients.png)
+
+- **YearsSinceLastPromotion** is the strongest driver of attrition risk — employees who haven't been promoted recently are significantly more likely to leave
+- **WorkLifeBalance** and **YearsAtCompany** are the strongest retention factors — longer tenure and better balance reduce attrition likelihood
+- **Age** has a modest negative effect — older employees are slightly less likely to leave
 
 ---
 
 ## Key Findings
 
-- **Age, WorkLifeBalance, YearsAtCompany, and YearsSinceLastPromotion** were the strongest predictors of attrition in this model
-- **MonthlyIncome** added noise rather than signal — removing it improved model accuracy
-- The model is intentionally general (company-wide) but could be adapted to department-level models with the same framework
-- Logistic regression coefficients provide direct interpretability — making this model useful for HR stakeholders, not just data scientists
+- Removing `MonthlyIncome` — counterintuitively — improved balanced accuracy, suggesting it added noise rather than signal in this simplified model
+- The model is intentionally general (company-wide) but the same framework can be adapted to department-level models
+- Logistic regression coefficients provide direct interpretability, making this model useful for HR stakeholders, not just data scientists
 
 ---
 
 ## Limitations
 
-- **Undersampling** reduces the training dataset significantly (1,390 rows vs. 4,410 original) — alternative approaches like SMOTE could be explored
-- Model accuracy of 67% leaves room for improvement with ensemble methods (Random Forest, XGBoost)
-- Features were selected based on domain knowledge; a systematic feature importance analysis could surface additional predictors
+- **Undersampling** reduces the training dataset significantly (1,390 rows vs. 4,410 original) — SMOTE could be explored as an alternative
+- 67% accuracy leaves room for improvement with ensemble methods (Random Forest, XGBoost)
+- Features were selected based on domain knowledge; systematic feature importance analysis could surface additional predictors
 
 ---
 
@@ -97,6 +105,7 @@ The 67% accuracy on balanced data is the most meaningful metric — the model is
 |---------|---------|
 | `pandas` | Data loading, cleaning, and balancing |
 | `scikit-learn` | Model training, evaluation, and splitting |
+| `matplotlib` / `seaborn` | Output visualizations |
 
 ---
 
@@ -104,8 +113,12 @@ The 67% accuracy on balanced data is the most meaningful metric — the model is
 
 ```
 ├── employee_attrition_model.py       # Full Python script
+├── methodology_notes.md              # Model selection and feature philosophy
 ├── Attrition_data_original.csv       # Raw dataset (Kaggle, public domain)
-├── Process_Walkthrough.txt           # Project methodology notes
+├── images/
+│   ├── confusion_matrix.png          # Model prediction results
+│   ├── feature_coefficients.png      # Variable impact on attrition
+│   └── class_balance.png             # Before/after undersampling
 └── README.md
 ```
 
